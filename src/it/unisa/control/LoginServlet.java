@@ -52,6 +52,6 @@ public class LoginServlet extends HttpServlet {
         if (input != null) {
             return input.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
         }
-        return null;
+        return null ;
     }
 }
