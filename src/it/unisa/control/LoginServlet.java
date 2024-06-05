@@ -16,33 +16,42 @@ import it.unisa.model.*;
  * Servlet implementation class LoginServlet
  */
 @WebServlet("/Login")
-
 public class LoginServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         UserDao usDao = new UserDao();
-        
-        try {    
-            String un = request.getParameter("un");
-            String pw = request.getParameter("pw");
-            UserBean user = usDao.doRetrieve(un, pw);
-            
-            String checkout = request.getParameter("checkout");
-            
-            if (user != null && user.isValid()) {
-                HttpSession session = request.getSession(true);    
-                session.setAttribute("currentSessionUser", user); 
-                
+
+        try {
+            UserBean user = new UserBean();
+            user.setUsername(sanitizeInput(request.getParameter("un")));
+            user.setPassword(sanitizeInput(request.getParameter("pw")));
+            user = usDao.doRetrieve(user.getUsername(), user.getPassword());
+
+            String checkout = sanitizeInput(request.getParameter("checkout"));
+
+            if (user.isValid()) {
+                HttpSession session = request.getSession(true);
+                session.setAttribute("currentSessionUser", user);
                 if (checkout != null)
                     response.sendRedirect(request.getContextPath() + "/account?page=Checkout.jsp");
                 else
                     response.sendRedirect(request.getContextPath() + "/Home.jsp");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/Login.jsp?action=error");
-            }
-        } catch(SQLException e) {
+            } else
+                response.sendRedirect(request.getContextPath() + "/Login.jsp?action=error"); //error page
+        } catch (SQLException e) {
             System.out.println("Error:" + e.getMessage());
-            // Gestire l'errore in modo appropriato, ad esempio, reindirizzare a una pagina di errore generica
-            response.sendRedirect(request.getContextPath() + "/error.jsp");
         }
+    }
+
+    // Metodo per sanificare l'input utente
+    private String sanitizeInput(String input) {
+        // Implementa il tuo metodo di sanificazione qui
+        // Ad esempio, puoi utilizzare un filtro per rimuovere caratteri non consentiti o utilizzare librerie come OWASP Java Encoder
+        // Ecco un esempio di base per rimuovere i tag HTML:
+        if (input != null) {
+            return input.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+        }
+        return null;
     }
 }
