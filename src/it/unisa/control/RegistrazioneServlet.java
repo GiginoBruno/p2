@@ -26,7 +26,7 @@ public class RegistrazioneServlet extends HttpServlet {
 	}
 
 	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException  {
 		
 		UserDao dao = new UserDao();
 		String nome = request.getParameter("nome");
@@ -37,7 +37,7 @@ public class RegistrazioneServlet extends HttpServlet {
 		String pwd = request.getParameter("pw");
 
         String[] parti = dataNascita.split("-");
-        dataNascita = parti[2] + "-" + parti[1] + "-" + parti[0];
+        dataNascita = parti[2] + "-" + parti[1] + "-" + parti[0] ;
 		
 		try {
 			
